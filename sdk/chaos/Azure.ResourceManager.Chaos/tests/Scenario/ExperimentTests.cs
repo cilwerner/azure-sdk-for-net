@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Azure.Core.TestFramework;
@@ -15,7 +17,7 @@ namespace Azure.ResourceManager.Chaos.Tests
     public class ExperimentTests : ChaosManagementTestBase
     {
         public ExperimentTests(bool isAsync)
-            : base(isAsync, RecordedTestMode.Playback)
+            : base(isAsync, RecordedTestMode.Record)
         {
         }
 
@@ -38,7 +40,10 @@ namespace Azure.ResourceManager.Chaos.Tests
         [RecordedTest]
         public async Task CreateOrUpdate()
         {
-            var resourceResponse = await this.ExperimentCollection.CreateOrUpdateAsync(WaitUntil.Completed, this.ExperimentName, this.MockExperimentEntities.GetVmssShutdownV2v0Experiment());
+            var resourceResponse = await this.ExperimentCollection.CreateOrUpdateAsync(
+                WaitUntil.Completed,
+                this.ExperimentName,
+                this.MockExperimentEntities.GetVmssShutdownV2v0Experiment());
             Assert.AreEqual(this.ExperimentName, resourceResponse.Value.Data.Name);
         }
 
@@ -48,6 +53,7 @@ namespace Azure.ResourceManager.Chaos.Tests
         {
             await this.ExperimentCollection.CreateOrUpdateAsync(WaitUntil.Completed, this.ExperimentName, this.MockExperimentEntities.GetVmssShutdownV2v0Experiment());
             var getResourceResponse = await this.ExperimentCollection.GetAsync(this.ExperimentName).ConfigureAwait(false);
+
             Assert.AreEqual(this.ExperimentName, getResourceResponse.Value.Data.Name);
         }
 
